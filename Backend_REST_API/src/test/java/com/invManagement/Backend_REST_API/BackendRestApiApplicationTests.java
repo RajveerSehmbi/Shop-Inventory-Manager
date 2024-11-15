@@ -1,4 +1,4 @@
-package com.southmeadstores.Backend_REST_API;
+package com.invManagement.Backend_REST_API;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

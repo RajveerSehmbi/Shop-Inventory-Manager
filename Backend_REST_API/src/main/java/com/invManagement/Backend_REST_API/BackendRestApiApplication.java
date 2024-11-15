@@ -1,4 +1,4 @@
-package com.southmeadstores.Backend_REST_API;
+package com.invManagement.Backend_REST_API;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
