@@ -1,7 +1,6 @@
 package com.invManagement.Backend_REST_API;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.invManagement.Backend_REST_API.model.Product;
 import org.junit.jupiter.api.Test;
