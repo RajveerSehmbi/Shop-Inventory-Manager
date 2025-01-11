@@ -5,12 +5,14 @@ import com.invManagement.Backend_REST_API.model.Product;
 import com.invManagement.Backend_REST_API.model.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ProductController {
@@ -21,6 +23,11 @@ public class ProductController {
         this.repository = repository;
     }
 
+    /*
+    Endpoint to add new products.
+    All product fields must be in the request body.
+    Product with same barcode must not already exist.
+     */
     @PostMapping("/product/add")
     public ResponseEntity<?> addNewProduct(@RequestBody Product product) {
 
@@ -41,8 +48,58 @@ public class ProductController {
                     .body(String.join(" ", errors));
         }
 
+        if (repository.existsById(product.getBarcode())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Product with the same barcode already exists.");
+        }
+
         Product savedProduct = repository.save(product);
         return ResponseEntity.ok(savedProduct);
+    }
+
+    /*
+    Endpoint to update the fields of an existing product.
+    Request body must contain the product barcode, and the information to update.
+     */
+    @PatchMapping("/product/update")
+    public ResponseEntity<?> updateProduct(@RequestBody Map<String, Object> updates) {
+
+        // Check if barcode is present
+        if (!updates.containsKey("barcode") || updates.get("barcode") == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Barcode is required to identify the product.");
+        }
+
+        String barcode = updates.get("barcode").toString();
+
+        // Find the product by barcode
+        Product oldProduct = repository.findByBarcode(barcode);
+        if (oldProduct == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Product with the specified barcode does not exist.");
+        }
+
+        // Update the fields
+        if (updates.containsKey("name") && updates.get("name") != null) {
+            oldProduct.setName(updates.get("name").toString());
+        }
+        if (updates.containsKey("buyPrice") && updates.get("buyPrice") != null) {
+            try {
+                int buyPrice = Integer.parseInt(updates.get("buyPrice").toString());
+                if (buyPrice < 0) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Buy Price must be a positive integer.");
+                }
+                oldProduct.setBuyPrice(buyPrice);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Buy Price must be an integer.");
+            }
+        }
+
+        // Save the updated product
+        Product updatedProduct = repository.save(oldProduct);
+        return ResponseEntity.ok(updatedProduct);
     }
 
 

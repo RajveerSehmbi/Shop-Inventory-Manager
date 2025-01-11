@@ -12,6 +12,15 @@ public class Product {
     private String name;
     private Integer buyPrice;
 
+    // Constructors
+    public Product(){}
+
+    public Product(String barcode, String name, Integer buyPrice) {
+        this.barcode = barcode;
+        this.name = name;
+        this.buyPrice = buyPrice;
+    }
+
     public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
