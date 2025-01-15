@@ -5,16 +5,14 @@ import com.invManagement.Backend_REST_API.model.Product;
 import com.invManagement.Backend_REST_API.model.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/product")
 public class ProductController {
 
     private final ProductRepository repository;
@@ -28,8 +26,8 @@ public class ProductController {
     All product fields must be in the request body.
     Product with same barcode must not already exist.
      */
-    @PostMapping("/product/add")
-    public ResponseEntity<?> addNewProduct(@RequestBody Product product) {
+    @PostMapping
+    public ResponseEntity<?> postProduct(@RequestBody Product product) {
 
         List<String> errors = new ArrayList<>();
 
@@ -61,8 +59,8 @@ public class ProductController {
     Endpoint to update the fields of an existing product.
     Request body must contain the product barcode, and the information to update.
      */
-    @PatchMapping("/product/update")
-    public ResponseEntity<?> updateProduct(@RequestBody Map<String, Object> updates) {
+    @PatchMapping
+    public ResponseEntity<?> patchProduct(@RequestBody Map<String, Object> updates) {
 
         // Check if barcode is present
         if (!updates.containsKey("barcode") || updates.get("barcode") == null) {

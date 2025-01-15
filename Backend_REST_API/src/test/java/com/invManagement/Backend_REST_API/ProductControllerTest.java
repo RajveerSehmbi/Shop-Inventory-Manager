@@ -4,7 +4,6 @@ package com.invManagement.Backend_REST_API;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.invManagement.Backend_REST_API.model.Product;
 import com.invManagement.Backend_REST_API.model.ProductRepository;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class ProductControllerTest {
     public void testAddNewProduct_validProduct() throws Exception {
 
         mockMvc.perform(
-                    MockMvcRequestBuilders.post("/product/add")
+                    MockMvcRequestBuilders.post("/product")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validProduct))
                 )
@@ -56,7 +55,7 @@ public class ProductControllerTest {
         repository.save(validProduct);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/product/add")
+                        MockMvcRequestBuilders.post("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(validProduct))
                 )
@@ -69,7 +68,7 @@ public class ProductControllerTest {
         Product product = new Product("1234", "Test", null);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/product/add")
+                        MockMvcRequestBuilders.post("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(product))
                 )
@@ -82,7 +81,7 @@ public class ProductControllerTest {
         Product product = new Product(null, "Test", 599);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/product/add")
+                        MockMvcRequestBuilders.post("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(product))
                 )
@@ -97,7 +96,7 @@ public class ProductControllerTest {
         product.setBuyPrice(599);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/product/add")
+                        MockMvcRequestBuilders.post("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(product))
                 )
@@ -110,7 +109,7 @@ public class ProductControllerTest {
         var product = new Product(); // Missing all fields except the ID.
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/product/add")
+                        MockMvcRequestBuilders.post("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(product))
                 )
@@ -131,7 +130,7 @@ public class ProductControllerTest {
         updateRequest.put("buyPrice", 699);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/product/update")
+                        MockMvcRequestBuilders.patch("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest))
                 )
@@ -151,7 +150,7 @@ public class ProductControllerTest {
         updateRequest.put("buyPrice", 699);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/product/update")
+                        MockMvcRequestBuilders.patch("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest))
                 )
@@ -168,7 +167,7 @@ public class ProductControllerTest {
         updateRequest.put("buyPrice", 699);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/product/update")
+                        MockMvcRequestBuilders.patch("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest))
                 )
@@ -185,7 +184,7 @@ public class ProductControllerTest {
         updateRequest.put("buyPrice", 4.32);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/product/update")
+                        MockMvcRequestBuilders.patch("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest))
                 )
@@ -202,7 +201,7 @@ public class ProductControllerTest {
         updateRequest.put("buyPrice", -400);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/product/update")
+                        MockMvcRequestBuilders.patch("/product")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updateRequest))
                 )
