@@ -38,7 +38,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_validProduct() throws Exception {
+    public void testPostProduct_validProduct() throws Exception {
 
         mockMvc.perform(
                     MockMvcRequestBuilders.post("/product")
@@ -50,7 +50,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_validProductAlreadyExists() throws Exception {
+    public void testPostProduct_validProductAlreadyExists() throws Exception {
 
         repository.save(validProduct);
 
@@ -77,7 +77,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_missingBarcode() throws Exception {
+    public void testPostProduct_missingBarcode() throws Exception {
         Product product = new Product(null, "Test", 599);
 
         mockMvc.perform(
@@ -90,7 +90,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_missingName() throws Exception {
+    public void testPostProduct_missingName() throws Exception {
         var product = new Product("1234", null, 599);
         product.setBarcode("1234");
         product.setBuyPrice(599);
@@ -105,7 +105,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_missingMultipleFields() throws Exception {
+    public void testPostProduct_missingMultipleFields() throws Exception {
         var product = new Product(); // Missing all fields except the ID.
 
         mockMvc.perform(
@@ -120,7 +120,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdateProduct_validUpdate() throws Exception {
+    public void testPatchProduct_validUpdate() throws Exception {
         repository.save(validProduct);
 
         //Request Body
@@ -142,7 +142,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdateProduct_missingBarcode() throws Exception {
+    public void testPatchProduct_missingBarcode() throws Exception {
         repository.save(validProduct);
 
         Map<String, Object> updateRequest = new HashMap<>();
@@ -159,7 +159,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdateProduct_productNotFound() throws Exception {
+    public void testPatchProduct_productNotFound() throws Exception {
 
         Map<String, Object> updateRequest = new HashMap<>();
         updateRequest.put("barcode", "nonexistentBarcode");
@@ -176,7 +176,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdateProduct_nonIntegerBuyPrice() throws Exception {
+    public void testPatchProduct_nonIntegerBuyPrice() throws Exception {
         repository.save(validProduct);
 
         Map<String, Object> updateRequest = new HashMap<>();
@@ -193,7 +193,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testUpdateProduct_negativeBuyPrice() throws Exception {
+    public void testPatchProduct_negativeBuyPrice() throws Exception {
         repository.save(validProduct);
 
         Map<String, Object> updateRequest = new HashMap<>();
