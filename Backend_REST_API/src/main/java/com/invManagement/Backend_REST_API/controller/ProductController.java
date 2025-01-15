@@ -47,12 +47,12 @@ public class ProductController {
         }
 
         if (repository.existsById(product.getBarcode())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Product with the same barcode already exists.");
         }
 
         Product savedProduct = repository.save(product);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
     /*
@@ -98,6 +98,36 @@ public class ProductController {
         // Save the updated product
         Product updatedProduct = repository.save(oldProduct);
         return ResponseEntity.ok(updatedProduct);
+    }
+
+    /*
+    Retrieve all products.
+     */
+    @GetMapping
+    public ResponseEntity<?> getAllProducts() {
+        List<Product> products = repository.findAll();
+        return  ResponseEntity.ok(products);
+    }
+
+    /*
+    Get an individual product.
+     */
+    @GetMapping("/{barcode}")
+    public ResponseEntity<?> getProduct(@PathVariable String barcode) {
+        Product product = repository.findByBarcode(barcode);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        return ResponseEntity.ok(product);
+    }
+
+    @DeleteMapping("/{barcode}")
+    public ResponseEntity<?> deleteProduct(@PathVariable String barcode) {
+        if (!repository.existsById(barcode)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+        repository.deleteById(barcode);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 

@@ -37,6 +37,8 @@ public class ProductControllerTest {
         repository.deleteAll();
     }
 
+
+    //---------------------------------POST ENDPOINT---------------------------------//
     @Test
     public void testPostProduct_validProduct() throws Exception {
 
@@ -45,7 +47,7 @@ public class ProductControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validProduct))
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.barcode").value("1234"));
     }
 
@@ -59,7 +61,7 @@ public class ProductControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(validProduct))
                 )
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.status().isConflict())
                 .andExpect(MockMvcResultMatchers.content().string("Product with the same barcode already exists."));
     }
 
@@ -119,6 +121,8 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string(containsString("Buy Price is required.")));
     }
 
+
+    //---------------------------------PATCH ENDPOINT---------------------------------//
     @Test
     public void testPatchProduct_validUpdate() throws Exception {
         repository.save(validProduct);
@@ -209,6 +213,74 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("Buy Price must be a positive integer."));
     }
 
+
+    //---------------------------------GET ENDPOINT---------------------------------//
+    @Test
+    public void testGetAllProducts() throws Exception {
+        repository.save(validProduct);
+
+        Product validProduct2 = new Product("5678", "test2", 599);
+        repository.save(validProduct2);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/product")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].barcode").value("1234"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].barcode").value("5678"));
+    }
+
+    @Test
+    public void testGetOneProduct_productExists() throws Exception {
+        repository.save(validProduct);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/product/1234")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.barcode").value("1234"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.buyPrice").value(599));
+    }
+
+    @Test
+    public void testGetOneProduct_productDoesNotExist() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/product/1234")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string("Product not found."));
+
+    }
+
+
+    //---------------------------------DELETE ENDPOINT---------------------------------//
+    @Test
+    public void testDeleteProduct_productExists() throws Exception {
+        repository.save(validProduct);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/product/1234")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteProduct_productDoesNotExist() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/product/1234")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string("Product not found."));
+    }
 
 
 
