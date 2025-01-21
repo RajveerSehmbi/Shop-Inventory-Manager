@@ -1,15 +1,19 @@
-package com.invManagement.Backend_REST_API.controller;
+package com.invManagement.Backend_REST_API.controllers;
 
 
-import com.invManagement.Backend_REST_API.model.Product;
-import com.invManagement.Backend_REST_API.model.ProductRepository;
+import com.invManagement.Backend_REST_API.models.Product.Product;
+import com.invManagement.Backend_REST_API.models.Product.ProductRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
@@ -27,24 +31,18 @@ public class ProductController {
     Product with same barcode must not already exist.
      */
     @PostMapping
-    public ResponseEntity<?> postProduct(@RequestBody Product product) {
+    public ResponseEntity<?> postProduct(@RequestBody @Valid Product product, BindingResult result) {
 
-        List<String> errors = new ArrayList<>();
+        if (result.hasErrors()) {
+            // Collect error messages from the BindingResult
+            List<String> errors = result.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage)  // Get the error messages
+                    .collect(Collectors.toList());
 
-        if (product.getBarcode() == null || product.getBarcode().isEmpty()) {
-            errors.add("Barcode is required.");
-        }
-        if (product.getName() == null || product.getName().isEmpty()) {
-            errors.add("Name is required.");
-        }
-        if (product.getBuyPrice() == null) {
-            errors.add("Buy Price is required.");
+            // Return a 400 Bad Request with the error messages
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.join(" ", errors));
         }
 
-        if (!errors.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(String.join(" ", errors));
-        }
 
         if (repository.existsById(product.getBarcode())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -57,8 +55,40 @@ public class ProductController {
 
     /*
     Endpoint to update the fields of an existing product.
-    Request body must contain the product barcode, and the information to update.
+    Request body must contain a new valid product.
      */
+    @PutMapping("/{barcode}")
+    public ResponseEntity<?> putProduct(@PathVariable String barcode, @RequestBody @Valid Product product, BindingResult result) {
+
+        Optional<Product> existingProductOptional = repository.findById(barcode);
+        if (existingProductOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Product with the specified barcode does not exist.");
+        }
+
+        Product existingProduct = existingProductOptional.get();
+
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(String.join(" ", errors));
+        }
+
+        if (!barcode.equals(product.getBarcode())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Barcode in path and body must match.");
+        }
+
+        existingProduct.setName(product.getName());
+        existingProduct.setBuyPrice(product.getBuyPrice());
+
+        Product updatedProduct = repository.save(existingProduct);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+
     @PatchMapping
     public ResponseEntity<?> patchProduct(@RequestBody Map<String, Object> updates) {
 

@@ -2,8 +2,8 @@ package com.invManagement.Backend_REST_API;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.invManagement.Backend_REST_API.model.Product;
-import com.invManagement.Backend_REST_API.model.ProductRepository;
+import com.invManagement.Backend_REST_API.models.Product.Product;
+import com.invManagement.Backend_REST_API.models.Product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testAddNewProduct_missingBuyPrice() throws Exception {
+    public void testPostProduct_missingBuyPrice() throws Exception {
         Product product = new Product("1234", "Test", null);
 
         mockMvc.perform(
@@ -122,9 +122,9 @@ public class ProductControllerTest {
     }
 
 
-    //---------------------------------PATCH ENDPOINT---------------------------------//
+    //---------------------------------PUT ENDPOINT---------------------------------//
     @Test
-    public void testPatchProduct_validUpdate() throws Exception {
+    public void testPutProduct_validUpdate() throws Exception {
         repository.save(validProduct);
 
         //Request Body
