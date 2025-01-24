@@ -38,3 +38,6 @@ out/
 
 ### ENV Variables ###
 src/main/resources/secrets.properties
+
+### LOG ###
+Backend_REST_API/log/

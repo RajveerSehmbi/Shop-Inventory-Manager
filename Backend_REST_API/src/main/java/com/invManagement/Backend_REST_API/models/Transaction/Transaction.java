@@ -1,8 +1,7 @@
 package com.invManagement.Backend_REST_API.models.Transaction;
 
-import com.invManagement.Backend_REST_API.models.Product.Product;
 import com.invManagement.Backend_REST_API.models.Shop.Shop;
-import com.invManagement.Backend_REST_API.models.User.User;
+import com.invManagement.Backend_REST_API.models.MyUser.MyUser;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-    private User user;
+    private MyUser myUser;
 
     private LocalDateTime dateTime;
 
@@ -30,9 +29,9 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(Shop shop, User user, LocalDateTime dateTime, List<TransactionItem> items) {
+    public Transaction(Shop shop, MyUser myUser, LocalDateTime dateTime, List<TransactionItem> items) {
         this.shop = shop;
-        this.user = user;
+        this.myUser = myUser;
         this.dateTime = dateTime;
         this.items = items;
     }
@@ -53,12 +52,12 @@ public class Transaction {
         this.shop = shop;
     }
 
-    public User getUser() {
-        return user;
+    public MyUser getUser() {
+        return myUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(MyUser myUser) {
+        this.myUser = myUser;
     }
 
     public LocalDateTime getDateTime() {
